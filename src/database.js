@@ -25,9 +25,32 @@ export class Database {
   insert(table, data) {
     if (Array.isArray(this.#database[table])) {
       this.#database[table].push(data)
+    } else {
+      this.#database[table] = [data]
     }
-    this.#database[table] = [data]
 
+    this.#persist()
+  }
+
+  delete(table, id) {
+    const index = this.#database[table].findIndex((row) => row.id === id)
+
+    if (index > -1) {
+      this.#database[table].splice(index, 1)
+    }
+    this.#persist()
+  }
+  update(table, id, data) {
+    const index = this.#database[table].findIndex((row) => row.id === id)
+    this.#database[table][index] = { id, ...data }
+
+    this.#persist()
+  }
+
+  completed(table, id, data) {
+    const index = this.#database[table].findIndex((row) => row.id === id)
+
+    Object.assign(this.#database[table][index], data)
     this.#persist()
   }
 }
