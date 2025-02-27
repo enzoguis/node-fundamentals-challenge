@@ -42,7 +42,8 @@ export class Database {
   }
   update(table, id, data) {
     const index = this.#database[table].findIndex((row) => row.id === id)
-    this.#database[table][index] = { id, ...data }
+
+    Object.assign(this.#database[table][index], data)
 
     this.#persist()
   }

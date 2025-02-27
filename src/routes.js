@@ -1,6 +1,7 @@
 import { Database } from './database.js'
 import { randomUUID } from 'crypto'
 import { routePathRegex } from './utils/route-path-regex.js'
+import { formatDate } from './utils/format-date.js'
 
 const database = new Database()
 
@@ -22,7 +23,7 @@ export const routes = [
         id: randomUUID(),
         title,
         description,
-        created_at: new Date(),
+        created_at: formatDate(new Date()),
         completed_at: null,
         completed: false,
         updated_at: null,
@@ -36,7 +37,16 @@ export const routes = [
     method: 'PUT',
     path: routePathRegex('/tasks/:id'),
     handler: (req, res) => {
-      console.log('acessou')
+      const { id } = req.params
+      const { title, description } = req.body
+
+      const data = {
+        title,
+        description,
+        updated_at: formatDate(new Date()),
+      }
+      database.update('tasks', id, data)
+      res.writeHead(204).end()
     },
   },
   {
@@ -46,8 +56,8 @@ export const routes = [
       const { id } = req.params
       const data = {
         completed: true,
-        completed_at: new Date(),
-        updated_at: new Date(),
+        completed_at: formatDate(new Date()),
+        updated_at: formatDate(new Date()),
       }
       database.completed('tasks', id, data)
       res.writeHead(200).end()
